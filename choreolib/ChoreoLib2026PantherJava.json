@@ -1,7 +1,7 @@
 {
   "fileName": "ChoreoLib2026PantherJava.json",
   "name": "Panther ChoreoLib (Java)",
-  "version": "2026.0.2-panther.1",
+  "version": "2026.0.2-panther.2",
   "uuid": "8bda3e39-55d9-43aa-a5b6-00b1c0d8f001",
   "frcYear": "2026",
   "mavenUrls": [
@@ -13,7 +13,7 @@
     {
       "groupId": "com.pantherbotics.choreo",
       "artifactId": "ChoreoLib-java",
-      "version": "2026.0.2-panther.1"
+      "version": "2026.0.2-panther.2"
     },
     {
       "groupId": "com.google.code.gson",
