@@ -58,7 +58,7 @@ public class AutoTrajectory {
           causes -> "Unable to get initial pose for trajectories " + causes + ".", kError);
 
   private final String name;
-  private final Trajectory<? extends TrajectorySample<?>> trajectory;
+  private Trajectory<? extends TrajectorySample<?>> trajectory;
   private final TrajectoryLogger<? extends TrajectorySample<?>> trajectoryLogger;
   private final Supplier<Pose2d> poseSupplier;
   private final Consumer<Pose2d> resetOdometry;
@@ -310,6 +310,14 @@ public class AutoTrajectory {
         driveSubsystem,
         routine,
         bindings);
+  }
+
+  void mirrorXInPlace() {
+    trajectory = trajectory.mirrorX();
+  }
+
+  void mirrorYInPlace() {
+    trajectory = trajectory.mirrorY();
   }
 
   /**

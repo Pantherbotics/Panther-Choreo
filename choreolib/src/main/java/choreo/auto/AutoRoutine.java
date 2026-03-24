@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -60,6 +62,9 @@ public class AutoRoutine {
 
   /** The timestamp of the current cycle */
   private double cycleTimestamp = 0;
+
+  /** The trajectories created for this routine. */
+  private final List<AutoTrajectory> trajectories = new ArrayList<>();
 
   /**
    * Creates a new loop with a specific name and a custom alliance supplier.
@@ -199,6 +204,36 @@ public class AutoRoutine {
   public <SampleType extends TrajectorySample<SampleType>> AutoTrajectory trajectory(
       Trajectory<SampleType> trajectory) {
     return factory.trajectory(trajectory, this, true);
+  }
+
+  void registerTrajectory(AutoTrajectory trajectory) {
+    trajectories.add(trajectory);
+  }
+
+  /**
+   * Mirrors all trajectories currently created by this routine across the field width.
+   *
+   * <p>This updates the existing {@link AutoTrajectory} instances in place so existing references
+   * keep pointing at the mirrored trajectories.
+   *
+   * @return this routine.
+   */
+  public AutoRoutine mirrorX() {
+    trajectories.forEach(AutoTrajectory::mirrorXInPlace);
+    return this;
+  }
+
+  /**
+   * Mirrors all trajectories currently created by this routine across the field length.
+   *
+   * <p>This updates the existing {@link AutoTrajectory} instances in place so existing references
+   * keep pointing at the mirrored trajectories.
+   *
+   * @return this routine.
+   */
+  public AutoRoutine mirrorY() {
+    trajectories.forEach(AutoTrajectory::mirrorYInPlace);
+    return this;
   }
 
   /**
