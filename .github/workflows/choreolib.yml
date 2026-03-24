@@ -51,7 +51,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add choreolib/dep
+          git add -f choreolib/dep
           if git diff --cached --quiet; then
             echo "No Maven repo changes to commit"
             exit 0
