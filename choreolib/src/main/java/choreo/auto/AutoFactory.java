@@ -256,17 +256,20 @@ public class AutoFactory {
     // type solidify everything
     final Trajectory<ST> solidTrajectory = trajectory;
     final Consumer<ST> solidController = (Consumer<ST>) this.controller;
-    return new AutoTrajectory(
-        trajectory.name(),
-        solidTrajectory,
-        poseSupplier,
-        resetOdometry,
-        solidController,
-        allianceCtx,
-        (TrajectoryLogger<ST>) trajectoryLogger,
-        driveSubsystem,
-        routine,
-        useBindings ? bindings : new AutoBindings());
+    AutoTrajectory autoTrajectory =
+        new AutoTrajectory(
+            trajectory.name(),
+            solidTrajectory,
+            poseSupplier,
+            resetOdometry,
+            solidController,
+            allianceCtx,
+            (TrajectoryLogger<ST>) trajectoryLogger,
+            driveSubsystem,
+            routine,
+            useBindings ? bindings : new AutoBindings());
+    routine.registerTrajectory(autoTrajectory);
+    return autoTrajectory;
   }
 
   /**
