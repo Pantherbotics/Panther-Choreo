@@ -2,8 +2,12 @@ name: ChoreoLib Java
 
 on: [push, pull_request]
 
+permissions:
+  contents: write
+
 jobs:
   java:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]')
     name: Java Maven
     runs-on: ubuntu-24.04
     steps:
@@ -11,7 +15,7 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-java@v5
@@ -19,15 +23,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Determine publish version
+      - name: Read vendordep version
         id: version
         shell: bash
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            version="${GITHUB_REF##*v}"
-          else
-            version="0.0.0-dev.${GITHUB_SHA::7}"
-          fi
+          version=$(python3 -c 'import json; print(json.load(open("choreolib/ChoreoLib2026PantherJava.json"))["version"])')
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Publish Java Maven artifacts
@@ -44,6 +44,20 @@ jobs:
           rm -rf choreolib/dep
           mkdir -p choreolib/dep
           cp -r choreolib/build/repos/releases/* choreolib/dep/
+
+      - name: Commit published Maven repo
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add choreolib/dep
+          if git diff --cached --quiet; then
+            echo "No Maven repo changes to commit"
+            exit 0
+          fi
+          git commit -m "Update ChoreoLib Java Maven repo [skip ci]"
+          git push
 
       - uses: actions/upload-artifact@v6
         with:
