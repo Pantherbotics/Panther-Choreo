@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 ext.licenseFile = files("$rootDir/LICENSE.txt")
 
-def pubVersion = '0.0.0'
+def pubVersion = (project.findProperty('pubVersion') ?: System.getenv('CHOREOLIB_PUB_VERSION') ?: '0.0.0').toString()
 
 def outputsFolder = file("$buildDir/outputs")
 
@@ -42,10 +42,10 @@ ext.addTaskToCopyAllOutputs = { task ->
     copyAllOutputs.from task.archiveFile
 }
 
-def artifactGroupId = 'choreo'
-def baseArtifactId = 'ChoreoLib'
-def zipBaseName = "_GROUP_choreo_ID_${baseArtifactId}-cpp_CLS"
-def javaBaseName = "_GROUP_choreo_ID_${baseArtifactId}-java_CLS"
+def artifactGroupId = (project.findProperty('artifactGroupId') ?: System.getenv('CHOREOLIB_GROUP_ID') ?: 'choreo').toString()
+def baseArtifactId = (project.findProperty('baseArtifactId') ?: System.getenv('CHOREOLIB_BASE_ARTIFACT_ID') ?: 'ChoreoLib').toString()
+def zipBaseName = "_GROUP_${artifactGroupId}_ID_${baseArtifactId}-cpp_CLS"
+def javaBaseName = "_GROUP_${artifactGroupId}_ID_${baseArtifactId}-java_CLS"
 
 task cppHeadersZip(type: Zip) {
     destinationDirectory = outputsFolder

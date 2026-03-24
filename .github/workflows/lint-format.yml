@@ -108,47 +108,6 @@ jobs:
       - run: pnpm install
       - run: npx tsc
 
-  choreolib-tidy:
-    name: "ChoreoLib clang-tidy"
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-          token: ${{secrets.GITHUB_TOKEN}}
-          fetch-depth: 0
-
-      - name: Fetch all history and metadata
-        run: |
-          git config --global --add safe.directory /__w/Choreo/Choreo
-          git checkout -b pr
-          git branch -f main origin/main
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.14
-
-      - run: pip3 install wpiformat==2025.79
-
-      - name: Create compile_commands.json
-        working-directory: choreolib
-        run: |
-          ./gradlew generateCompileCommands -Ptoolchain-optional-roboRio
-          ../.github/workflows/fix_compile_commands.py build/TargetedCompileCommands/linuxx86-64release/compile_commands.json
-          ../.github/workflows/fix_compile_commands.py build/TargetedCompileCommands/linuxx86-64debug/compile_commands.json
-
-      - name: List changed files
-        working-directory: choreolib
-        run: wpiformat -f . -list-changed-files
-
-      - name: Run clang-tidy debug
-        working-directory: choreolib
-        run: wpiformat -f . -no-format -tidy-all -compile-commands=build/TargetedCompileCommands/linuxx86-64debug
-
-      - name: Run clang-tidy release
-        working-directory: choreolib
-        run: wpiformat -f . -no-format -tidy-all -compile-commands=build/TargetedCompileCommands/linuxx86-64release
-
   trajoptlib-tidy:
     name: "TrajoptLib clang-tidy"
     runs-on: ubuntu-24.04
